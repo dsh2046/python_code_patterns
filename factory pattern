@@ -1,0 +1,70 @@
+from abc import ABC, abstractmethod
+
+class VideoExporter(ABC):
+    """basic representation of video exporting codec"""
+    @abstractmethod
+    def prepare_export(self):
+        """a"""
+        
+    @abstractmethod
+    def do_export(self):
+        """a"""
+        
+class LosslessVideoExporter(VideoExporter):
+    """Lossless video exporting codec"""
+    def prepare_export(self, video_data):
+        print("Preparing data for lossless")
+        
+    def do_export(self, folder):
+        print("Export data in lossless format")
+        
+class H264bVideoExporter(VideoExporter):
+    """H264b video exporting codec"""
+    def prepare_export(self, video_data):
+        print("Preparing data for H264b")
+        
+    def do_export(self, folder):
+        print("Export data in H264b format")
+        
+class ExporterFactory(ABC):
+    """
+    Factory that represents a video codec.
+    The factory doesn't maintain any of the instances it creates.
+    """
+    def get_video_exporter(self) -> VideoExporter:
+        """Returns a new video exporter instance."""
+        
+class LowQualityExporter(ExporterFactory):
+    """Low quality video exporter"""
+    def get_video_exporter(self) -> VideoExporter:
+        return H264bVideoExporter()
+        
+class HighQualityExporter(ExporterFactory):
+    """High quality video exporter"""
+    def get_video_exporter(self) -> VideoExporter:
+        return H264bVideoExporter()      
+        
+def read_exporter() -> ExporterFactory:
+    factories = {
+        'low': LowQualityExporter(),
+        'high': HighQualityExporter()
+    }
+    while True:
+        video_quality = input('Please type in the video quality:')
+        if video_quality in factories:
+            return factories.get(video_quality)
+        print(f"unknown quality {video_quality}")
+    
+
+def main():
+    fac = read_exporter()
+    exporter = fac.get_video_exporter()
+        
+    # Prepare the export
+    exporter.prepare_export('data')
+    
+    # Do the export
+    exporter.do_export('path')
+
+if __name__ == '__main__':       
+        main()
